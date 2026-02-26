@@ -1,0 +1,30 @@
+{
+  "name": "recipenest",
+  "version": "1.0.0",
+  "description": "A full-stack web application for discovering and sharing recipes",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "recipes",
+    "cooking",
+    "food"
+  ],
+  "author": "Braxton Fails",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.0",
+    "dotenv": "^16.3.1",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.1.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "jest": "^29.7.0"
+  }
+}
