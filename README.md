@@ -1,6 +1,6 @@
 # RecipeNest
 
-A recipe-sharing web application: discover, create, and share recipes. (Static front-end demo for Client/Server Web Programming.)
+A recipe-sharing web application: discover, create, and share recipes. 
 
 ---
 
