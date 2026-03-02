@@ -17,7 +17,12 @@
 /* ===== Page base ===== */
 html, body { height: 100%; }
 body{
-  background: var(--rn-bg);
+  background:
+    linear-gradient(rgba(184,170,155,0.9), rgba(184,170,155,0.9)),
+    url("../public/images/recipe_background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   color: var(--rn-ink);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
@@ -227,7 +232,7 @@ body{
 /* ===== Hero (home welcome area) ===== */
 .hero {
   background: var(--rn-bg);
-  padding: 2rem 1rem 1rem;
+  padding: 1.25rem 1rem 0.5rem;
   color: var(--rn-ink);
 }
 .hero .container {
@@ -297,7 +302,11 @@ body{
 
 /* ===== Home: Recipe section (3 rows, each scrollable with arrows) ===== */
 .rn-recipes {
-  background: var(--rn-panel);
+  background:
+    linear-gradient(rgba(200,185,167,0.8), rgba(200,185,167,0.8)),
+    url("../public/images/recipe_background.jpg");
+  background-size: cover;
+  background-position: center;
   padding-top: 1.5rem;
   border-top-left-radius: 32px;
   border-top-right-radius: 32px;
