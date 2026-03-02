@@ -314,7 +314,17 @@ body{
 .rn-recipes-rows {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0.25rem;
+}
+.rn-row-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--rn-ink);
+  margin: 1rem 0 0.5rem 0;
+}
+.rn-row-title:first-child {
+  margin-top: 0;
 }
 .rn-row-wrapper {
   display: flex;
