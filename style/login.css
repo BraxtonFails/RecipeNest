@@ -1,0 +1,154 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+body{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url(../public/images/background.png) no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+body::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.3); /* light overlay */
+    pointer-events: none;
+    z-index: 0;
+}
+
+.page-title{
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: #2c2c2c;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.wrapper{
+    position: relative;
+    z-index: 1;
+}
+.wrapper{
+    width: 420px;
+    background: #f9f1e7; /* creamy panel */
+    color: #2c2c2c; /* dark text */
+    border-radius: 12px;
+    padding: 30px 40px;
+    margin-top: 100px; /* lower the box */
+}
+.recipe-nest-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    text-align: center;
+    color: #2c2c2c;
+    margin: 0 0 8px 0;
+}
+
+.wrapper h1{
+    font-size:36px;
+    text-align:center;
+
+}
+.form-row {
+    display: flex;
+    gap: 12px;
+    margin: 30px 0;
+}
+.form-row .input-box {
+    flex: 1;
+    margin: 0;
+}
+
+.wrapper .input-box{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+}
+.input-box input{
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.2); /* 20% opacity */
+    border: 1px solid rgba(0,0,0,0.15);
+    outline: none;
+    border-radius: 40px;
+    font-size: 16px;
+    color: #2c2c2c;
+    padding: 20px 45px 20px 20px;
+}
+.input-box input::placeholder{
+    color: #555;
+}
+.input-box i{
+    position: absolute;
+    right:20px;
+    top: 30%;
+    transform: translate(-50%);
+    font-size: 20px;
+}
+.wrapper .remember-forgot{
+    display: flex;
+    justify-content: space-between;
+    font-size: 14.5px;
+    margin: -15px 0 15px;
+}
+.remember-forgot label input{
+    accent-color: #2c2c2c;
+    margin-right: 3px;
+
+}
+.remember-forgot a{
+    color: #2c2c2c;
+    text-decoration: none;
+
+}
+.remember-forgot a:hover{
+    text-decoration: underline;
+}
+.wrapper .btn{
+    display: block;
+    width: 100%;
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    text-decoration: none;
+    background: #d1c4b2; /* soft brown button */
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0,0,0,.1);
+    cursor: pointer;
+    color: #2c2c2c;
+    font-weight: 600;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+.wrapper .btn:hover {
+    filter: brightness(0.97);
+    color: #2c2c2c;
+}
+.wrapper .register-link{
+    font-size: 14px;
+    text-align: center;
+    margin: 20px 0 15px;
+}
+.register-link a{
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    font-weight: 600;
+}
+.register-link a:hover{
+    text-decoration: underline;
+}

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Upload Recipe – RecipeNest</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="../style/recipenest.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="rn-header border-bottom">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container">
+        <a href="../index.html" class="navbar-brand d-flex align-items-center">
+          <span class="fw-bold">RecipeNest</span>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#mainNav"
+          aria-controls="mainNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="upload.html">Upload</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="login.html">Login</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card rn-card rn-upload-card">
+            <div class="card-body p-4">
+              <h1 class="rn-upload-title">Upload your recipe</h1>
+              <p class="text-muted mb-4">Add an image, title, description, and details to share your recipe.</p>
+
+              <form class="rn-upload-form" id="uploadForm" onsubmit="return false;">
+                <div class="mb-4">
+                  <label for="recipeImage" class="form-label fw-semibold">Recipe image</label>
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="recipeImage"
+                    name="recipeImage"
+                    accept="image/*"
+                    required
+                    aria-describedby="imageHelp"
+                  />
+                  <div id="imageHelp" class="form-text">PNG, JPG or GIF. Max 5MB.</div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="recipeTitle" class="form-label fw-semibold">Title</label>
+                  <input
+                    type="text"
+                    class="form-control form-control-lg"
+                    id="recipeTitle"
+                    name="recipeTitle"
+                    placeholder="e.g. Blueberry Pancakes"
+                    required
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="recipeDescription" class="form-label fw-semibold">Description</label>
+                  <textarea
+                    class="form-control"
+                    id="recipeDescription"
+                    name="recipeDescription"
+                    rows="3"
+                    placeholder="A short description of your recipe and when it’s best served."
+                    required
+                  ></textarea>
+                </div>
+
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label for="cookTime" class="form-label fw-semibold">Prep + cook time</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="cookTime"
+                      name="cookTime"
+                      placeholder="e.g. 35 min"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="difficulty" class="form-label fw-semibold">Difficulty</label>
+                    <select class="form-select" id="difficulty" name="difficulty">
+                      <option value="">Choose…</option>
+                      <option value="Easy">Easy</option>
+                      <option value="Medium">Medium</option>
+                      <option value="Hard">Hard</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="ingredients" class="form-label fw-semibold">Ingredients</label>
+                  <textarea
+                    class="form-control font-monospace"
+                    id="ingredients"
+                    name="ingredients"
+                    rows="6"
+                    placeholder="One ingredient per line, e.g.&#10;1½ cups all-purpose flour&#10;3½ tsp baking powder&#10;1 tbsp sugar"
+                  ></textarea>
+                </div>
+
+                <div class="mb-4">
+                  <label for="directions" class="form-label fw-semibold">Directions</label>
+                  <textarea
+                    class="form-control"
+                    id="directions"
+                    name="directions"
+                    rows="8"
+                    placeholder="One step per line, in order.&#10;e.g. In a bowl, whisk together flour, baking powder, sugar, and salt."
+                  ></textarea>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                  <button type="submit" class="btn btn-rn-primary">
+                    <i class="bi bi-cloud-upload me-2" aria-hidden="true"></i>Publish recipe
+                  </button>
+                  <a href="../index.html" class="btn btn-rn-outline">Cancel</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

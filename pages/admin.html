@@ -9,52 +9,180 @@
     <meta name="author" content="" />
     <title>Admin Dashboard</title>
 
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <meta name="theme-color" content="#712cf9" />
+      <link rel="stylesheet" href="../style/recipenest.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <meta name="theme-color" content="#7dbf77" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
     <style>
-      /* -- small styling for admin layout -- */
-      body { background: #f6f7fb; }
+      /* Admin layout using RecipeNest theme */
+      body {
+        background: var(--rn-bg);
+        color: var(--rn-ink);
+      }
 
       .admin-shell { min-height: 100vh; }
 
       .sidebar {
         width: 260px;
-        background: #111827;
-        color: #e5e7eb;
+        background: #3d3632;
+        color: #e8e4df;
+        border-right: 1px solid rgba(0,0,0,.08);
       }
 
       .sidebar a {
-        color: #e5e7eb;
+        color: #e8e4df;
         text-decoration: none;
       }
 
       .sidebar .nav-link {
-        border-radius: 10px;
+        border-radius: 12px;
         padding: 10px 12px;
+        color: #e8e4df;
       }
 
       .sidebar .nav-link:hover {
-        background: rgba(255,255,255,.08);
+        background: rgba(255,255,255,.1);
+        color: #fff;
       }
 
       .sidebar .nav-link.active {
-        background: rgba(255,255,255,.14);
+        background: var(--rn-accent);
+        color: var(--rn-ink);
+      }
+
+      .sidebar .border-secondary {
+        border-color: rgba(255,255,255,.2) !important;
       }
 
       .topbar {
-        background: #ffffff;
-        border-bottom: 1px solid #e5e7eb;
+        background: var(--rn-panel);
+        border-bottom: 1px solid rgba(0,0,0,.08);
+        color: var(--rn-ink);
+      }
+
+      .topbar .form-control,
+      .topbar .input-group-text {
+        background: #f8f6f2;
+        border-color: rgba(0,0,0,.1);
+        border-radius: 12px;
+        color: var(--rn-ink);
+      }
+
+      .topbar .btn-outline-secondary {
+        border-color: rgba(0,0,0,.15);
+        color: var(--rn-ink);
+      }
+
+      .topbar .btn-outline-secondary:hover {
+        background: #f8f6f2;
+        border-color: rgba(0,0,0,.2);
+        color: var(--rn-ink);
+      }
+
+      .topbar .btn-primary {
+        background: var(--rn-accent);
+        border-color: var(--rn-accent);
+        color: var(--rn-ink);
+        font-weight: 600;
+      }
+
+      .topbar .btn-primary:hover {
+        background: #6bab65;
+        border-color: #6bab65;
+        color: var(--rn-ink);
+      }
+
+      main.container {
+        background: transparent;
       }
 
       .card {
-        border: 1px solid #e5e7eb;
-        border-radius: 14px;
+        background: #f8f6f2;
+        border: 1px solid rgba(0,0,0,.06);
+        border-radius: var(--rn-radius);
+        box-shadow: 0 4px 12px rgba(0,0,0,.06);
+      }
+
+      .card .border-bottom {
+        border-color: rgba(0,0,0,.08) !important;
+      }
+
+      .card .text-secondary {
+        color: var(--rn-muted) !important;
+      }
+
+      .card .btn-outline-secondary {
+        border-color: rgba(0,0,0,.15);
+        color: var(--rn-ink);
+      }
+
+      .card .btn-outline-secondary:hover {
+        background: rgba(0,0,0,.05);
+        border-color: rgba(0,0,0,.2);
+        color: var(--rn-ink);
+      }
+
+      .table {
+        color: var(--rn-ink);
+      }
+
+      .table thead {
+        background: var(--rn-panel);
+        color: var(--rn-ink);
+        border-color: rgba(0,0,0,.08);
+      }
+
+      .table tbody tr {
+        border-color: rgba(0,0,0,.06);
       }
 
       .table > :not(caption) > * > * {
         vertical-align: middle;
+      }
+
+      .badge.text-bg-success { background: rgba(125,191,119,.5) !important; color: var(--rn-ink); }
+      .badge.text-bg-warning { background: rgba(240,180,79,.5) !important; color: var(--rn-ink); }
+      .badge.text-bg-danger { background: rgba(217,123,178,.4) !important; color: var(--rn-ink); }
+      .badge.text-bg-secondary { background: rgba(0,0,0,.12) !important; color: var(--rn-ink); }
+
+      footer {
+        background: var(--rn-panel);
+        border-top: 1px solid rgba(0,0,0,.08);
+        color: var(--rn-muted);
+      }
+
+      /* Offcanvas (mobile menu) match sidebar */
+      .offcanvas-start {
+        background: #3d3632;
+        color: #e8e4df;
+      }
+
+      .offcanvas-header {
+        border-bottom: 1px solid rgba(255,255,255,.15);
+      }
+
+      .offcanvas-header .btn-close {
+        filter: invert(1);
+        opacity: .8;
+      }
+
+      .offcanvas-body .nav-link {
+        color: #e8e4df;
+        border-radius: 12px;
+      }
+
+      .offcanvas-body .nav-link:hover,
+      .offcanvas-body .nav-link.active {
+        background: var(--rn-accent);
+        color: var(--rn-ink);
+      }
+
+      .offcanvas-body hr {
+        border-color: rgba(255,255,255,.2);
       }
     </style>
   </head>
@@ -91,7 +219,7 @@
         </nav>
 
         <div class="mt-auto pt-3 border-top border-secondary">
-          <a class="nav-link" href="index.html">
+          <a class="nav-link" href="../index.html">
             <i class="bi bi-box-arrow-left me-2"></i> Back to site
           </a>
         </div>
@@ -141,7 +269,7 @@
               <a class="nav-link" href="#"><i class="bi bi-flag me-2"></i> Reports</a>
               <a class="nav-link" href="#"><i class="bi bi-gear me-2"></i> Settings</a>
               <hr>
-              <a class="nav-link" href="index.html"><i class="bi bi-box-arrow-left me-2"></i> Back to site</a>
+              <a class="nav-link" href="../index.html"><i class="bi bi-box-arrow-left me-2"></i> Back to site</a>
             </nav>
           </div>
         </div>
@@ -323,13 +451,6 @@
           </div>
 
         </main>
-
-        <!-- -- Footer -- -->
-        <footer class="text-secondary py-4">
-          <div class="container">
-            <div class="small">RecipeNest Admin</div>
-          </div>
-        </footer>
 
       </div>
     </div>
