@@ -23,17 +23,6 @@ A recipe-sharing web application: discover, create, and share recipes. (Static f
 
 ---
 
-## Supporting documentation
-
-| Document | Location |
-|----------|----------|
-| **Project Proposal** | [docs/project-proposal.md](docs/project-proposal.md) |
-| **Project Description** | [docs/project-description.md](docs/project-description.md) |
-| **Project Requirements** | [docs/project-requirements.md](docs/project-requirements.md) |
-| **Database ERD** | [docs/database-erd.md](docs/database-erd.md) |
-
----
-
 ## Profile management (who has access to what)
 
 - **Anonymous visitors:** View landing (featured recipes), About, Register page; can open Login (non-functional).
