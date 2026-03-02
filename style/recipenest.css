@@ -297,11 +297,14 @@ body{
 
 /* ===== Home: Recipe section (3 rows, each scrollable with arrows) ===== */
 .rn-recipes {
-  background: var(--rn-bg);
-  padding-top: 1rem;
+  background: var(--rn-panel);
+  padding-top: 1.5rem;
+  border-top-left-radius: 32px;
+  border-top-right-radius: 32px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,.12);
 }
 .rn-recipes.py-5 {
-  padding-top: 1rem;
+  padding-top: 1.5rem;
   padding-bottom: 3rem;
 }
 .rn-section-title {
