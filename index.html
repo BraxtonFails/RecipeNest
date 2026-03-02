@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Discover, create, and share your favorite recipes in one place." />
+    <title>RecipeNest – Discover &amp; Share Recipes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="style/recipenest.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+    <meta name="theme-color" content="#7dbf77" />
+  </head>
+  <body>
+    <!-- Page header and navbar -->
+    <header class="rn-header">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+          <a href="index.html" class="navbar-brand rn-brand-link d-flex align-items-center">
+            <span class="rn-brand-text">RecipeNest</span>
+          </a>
+          <button
+            class="navbar-toggler rn-nav-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNav"
+            aria-controls="mainNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto gap-1 gap-lg-2">
+              <li class="nav-item">
+                <a class="nav-link rn-nav-link active" aria-current="page" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link rn-nav-link" href="pages/profile.html">Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link rn-nav-link" href="pages/upload.html">Upload</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link rn-nav-link" href="pages/register.html">Register</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link rn-nav-link rn-nav-link-cta" href="pages/login.html">Login</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero text-center">
+        <div class="container">
+          <h1 class="hero-title">RecipeNest</h1>
+          <p class="hero-sub">Discover, create, and share your favorite recipes in one place.</p>
+          <div class="hero-cta">
+            <a href="pages/upload.html" class="btn btn-rn-primary btn-lg">Upload your own</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recipe grid: 3 rows, each row scrollable with arrows -->
+      <section class="rn-recipes py-5">
+        <div class="container">
+          <div class="rn-recipes-rows">
+            <!-- Row 1 -->
+            <h2 class="rn-row-title">Featured recipes</h2>
+            <div class="rn-row-wrapper">
+              <button type="button" class="rn-row-arrow rn-row-arrow-left" aria-label="Scroll row left"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+              <div class="rn-row-scroll" tabindex="0">
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Blueberry Pancakes"><div class="card-body"><h3 class="rn-card-title">Blueberry Pancakes</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.9</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>35 min</span><span class="rn-pill orange">Med</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Blueberry Pancakes recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Chicken Alfredo"><div class="card-body"><h3 class="rn-card-title">Chicken Alfredo</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.7</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>45 min</span><span class="rn-pill orange">Easy</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Chicken Alfredo recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Veggie Stir Fry"><div class="card-body"><h3 class="rn-card-title">Veggie Stir Fry</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.8</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>25 min</span><span class="rn-pill orange">Easy</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Veggie Stir Fry recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Blueberry Pancakes"><div class="card-body"><h3 class="rn-card-title">Blueberry Pancakes</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.9</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>35 min</span><span class="rn-pill orange">Med</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Blueberry Pancakes recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Chicken Alfredo"><div class="card-body"><h3 class="rn-card-title">Chicken Alfredo</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.7</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>45 min</span><span class="rn-pill orange">Easy</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Chicken Alfredo recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Veggie Stir Fry"><div class="card-body"><h3 class="rn-card-title">Veggie Stir Fry</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.8</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>25 min</span><span class="rn-pill orange">Easy</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Veggie Stir Fry recipe"></a></div></div></div>
+              </div>
+              <button type="button" class="rn-row-arrow rn-row-arrow-right" aria-label="Scroll row right"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+            </div>
+            <!-- Row 2 -->
+            <h2 class="rn-row-title">People's choice</h2>
+            <div class="rn-row-wrapper">
+              <button type="button" class="rn-row-arrow rn-row-arrow-left" aria-label="Scroll row left"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+              <div class="rn-row-scroll" tabindex="0">
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Blueberry Pancakes"><div class="card-body"><h3 class="rn-card-title">Blueberry Pancakes</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.9</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>35 min</span><span class="rn-pill orange">Med</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Blueberry Pancakes recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Chicken Alfredo"><div class="card-body"><h3 class="rn-card-title">Chicken Alfredo</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.7</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>45 min</span><span class="rn-pill orange">Easy</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Chicken Alfredo recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Veggie Stir Fry"><div class="card-body"><h3 class="rn-card-title">Veggie Stir Fry</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.8</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>25 min</span><span class="rn-pill orange">Easy</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Veggie Stir Fry recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Blueberry Pancakes"><div class="card-body"><h3 class="rn-card-title">Blueberry Pancakes</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.9</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>35 min</span><span class="rn-pill orange">Med</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Blueberry Pancakes recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Chicken Alfredo"><div class="card-body"><h3 class="rn-card-title">Chicken Alfredo</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.7</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>45 min</span><span class="rn-pill orange">Easy</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Chicken Alfredo recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Veggie Stir Fry"><div class="card-body"><h3 class="rn-card-title">Veggie Stir Fry</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.8</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>25 min</span><span class="rn-pill orange">Easy</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Veggie Stir Fry recipe"></a></div></div></div>
+              </div>
+              <button type="button" class="rn-row-arrow rn-row-arrow-right" aria-label="Scroll row right"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+            </div>
+            <!-- Row 3 -->
+            <h2 class="rn-row-title">Vegan choices</h2>
+            <div class="rn-row-wrapper">
+              <button type="button" class="rn-row-arrow rn-row-arrow-left" aria-label="Scroll row left"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+              <div class="rn-row-scroll" tabindex="0">
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Blueberry Pancakes"><div class="card-body"><h3 class="rn-card-title">Blueberry Pancakes</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.9</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>35 min</span><span class="rn-pill orange">Med</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Blueberry Pancakes recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Chicken Alfredo"><div class="card-body"><h3 class="rn-card-title">Chicken Alfredo</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.7</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>45 min</span><span class="rn-pill orange">Easy</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Chicken Alfredo recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Veggie Stir Fry"><div class="card-body"><h3 class="rn-card-title">Veggie Stir Fry</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.8</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>25 min</span><span class="rn-pill orange">Easy</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Veggie Stir Fry recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Blueberry Pancakes"><div class="card-body"><h3 class="rn-card-title">Blueberry Pancakes</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.9</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>35 min</span><span class="rn-pill orange">Med</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Blueberry Pancakes recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Chicken Alfredo"><div class="card-body"><h3 class="rn-card-title">Chicken Alfredo</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.7</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>45 min</span><span class="rn-pill orange">Easy</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Chicken Alfredo recipe"></a></div></div></div>
+                <div class="rn-card-wrap"><div class="card rn-card position-relative"><img src="public/images/pancakes.jpg" class="rn-thumb card-img-top" alt="Veggie Stir Fry"><div class="card-body"><h3 class="rn-card-title">Veggie Stir Fry</h3><div class="rn-meta"><span class="rn-pill green"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>4.8</span><span class="rn-pill"><i class="bi bi-clock me-1" aria-hidden="true"></i>25 min</span><span class="rn-pill orange">Easy</span></div><a href="pages/recipe.html" class="stretched-link" aria-label="View Veggie Stir Fry recipe"></a></div></div></div>
+              </div>
+              <button type="button" class="rn-row-arrow rn-row-arrow-right" aria-label="Scroll row right"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="rn-footer py-4 mt-auto">
+      <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center small">
+        <div class="rn-footer-copy">© 2026 RecipeNest</div>
+        <div class="mt-2 mt-md-0">
+          <a href="pages/profile.html" class="rn-footer-link me-3">Profile</a>
+          <a href="#" class="rn-footer-link">Contact</a>
+        </div>
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.querySelectorAll('.rn-row-wrapper').forEach(function(wrapper) {
+        var scrollEl = wrapper.querySelector('.rn-row-scroll');
+        var leftBtn = wrapper.querySelector('.rn-row-arrow-left');
+        var rightBtn = wrapper.querySelector('.rn-row-arrow-right');
+        if (!scrollEl || !leftBtn || !rightBtn) return;
+        var cardWrap = scrollEl.querySelector('.rn-card-wrap');
+        var step = cardWrap ? cardWrap.offsetWidth + 16 : 280;
+        leftBtn.addEventListener('click', function() {
+          scrollEl.scrollBy({ left: -step, behavior: 'smooth' });
+        });
+        rightBtn.addEventListener('click', function() {
+          scrollEl.scrollBy({ left: step, behavior: 'smooth' });
+        });
+      });
+    </script>
+  </body>
+</html>
