@@ -274,6 +274,21 @@ body{
   background: #6bab65;
   color: var(--rn-ink);
 }
+.btn-rn-outline-AYR {
+  background: transparent;
+  border: 2px solid rgba(0,0,0,.2);
+  color: var(--rn-ink);
+  font-weight: 600;
+  padding: 0.65rem 1.5rem;
+  border-radius: 999px;
+  display: inline-block;
+  float: right;
+}
+.btn-rn-outline-AYR:hover {
+  background: rgba(255,255,255,.2);
+  border-color: rgba(0,0,0,.25);
+  color: var(--rn-ink);
+}
 .btn-rn-outline {
   background: transparent;
   border: 2px solid rgba(0,0,0,.2);
@@ -315,6 +330,7 @@ body{
 .rn-recipes.py-5 {
   padding-top: 1.5rem;
   padding-bottom: 3rem;
+
 }
 .rn-section-title {
   font-family: 'Playfair Display', serif;
