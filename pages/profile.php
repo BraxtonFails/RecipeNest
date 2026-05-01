@@ -12,23 +12,68 @@ if (!$logged_in) {
 
 require_once '../config/db.php';
 
-$user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare('SELECT Username, Email, Name, Bio, ProfilePictureURL, DateCreation FROM users WHERE UserID = ?');
+function avatar_color($id) {
+    $p = ['#7dbf77','#e6845a','#5a8fe6','#9b6de6','#e6b05a','#5ab8e6','#e6527a','#52b8a0'];
+    return $p[(int)$id % count($p)];
+}
+
+$user_id = (int)$_SESSION['user_id'];
+
+$stmt = $conn->prepare('SELECT Username, Name, Bio, DateCreation FROM users WHERE UserID = ?');
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
-$stmt->bind_result($username, $email, $name, $bio, $profile_pic, $date_created);
+$stmt->bind_result($username, $name, $bio, $date_created);
 $stmt->fetch();
 $stmt->close();
+
+// Follower count
+$stmt = $conn->prepare('SELECT COUNT(*) FROM follows WHERE FollowingID = ?');
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$stmt->bind_result($follower_count);
+$stmt->fetch();
+$stmt->close();
+
+// Following count
+$stmt = $conn->prepare('SELECT COUNT(*) FROM follows WHERE FollowerID = ?');
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$stmt->bind_result($following_count);
+$stmt->fetch();
+$stmt->close();
+
+// Recipe count + grid
+$stmt = $conn->prepare("
+    SELECT r.RecipeID, r.Title, r.Difficulty, r.TotalCookTime,
+           m.MediaURL,
+           COUNT(DISTINCT l.UserID) AS LikeCount
+    FROM recipes r
+    LEFT JOIN media m ON m.RecipeID = r.RecipeID AND m.MediaType = 'image' AND m.OrderIndex = (
+        SELECT MIN(m2.OrderIndex) FROM media m2 WHERE m2.RecipeID = r.RecipeID AND m2.MediaType = 'image'
+    )
+    LEFT JOIN likes l ON l.RecipeID = r.RecipeID
+    WHERE r.UserID = ?
+    GROUP BY r.RecipeID
+    ORDER BY r.DateCreation DESC
+");
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$recipes = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+$display_name = $name ?: $username;
+$initial      = strtoupper(mb_substr($display_name, 0, 1));
+$av_color     = avatar_color($user_id);
 ?>
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Profile – RecipeNest</title>
+  <title><?php echo htmlspecialchars($display_name); ?> – RecipeNest</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="../public/css/recipenest.css" />
+  <link rel="stylesheet" href="../public/css/recipenest.css?v=<?php echo filemtime('../public/css/recipenest.css'); ?>" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -40,117 +85,79 @@ $stmt->close();
         <div class="collapse navbar-collapse" id="mainNav">
           <ul class="navbar-nav ms-auto gap-1 gap-lg-2">
             <li class="nav-item"><a class="nav-link rn-nav-link" href="../index.php">Home</a></li>
-            <li class="nav-item"><a class="nav-link rn-nav-link active" aria-current="page" href="profile.php">Profile</a></li>
+            <li class="nav-item"><a class="nav-link rn-nav-link" href="search.php">Search</a></li>
+            
             <li class="nav-item"><a class="nav-link rn-nav-link" href="upload.php">Upload</a></li>
-            <?php if ($logged_in): ?>
-            <?php if ($_SESSION["user_role"] === "admin"): ?><li class="nav-item"><a class="nav-link rn-nav-link" href="../pages/admin.php"><i class="bi bi-shield-lock me-1"></i>Dashboard</a></li><?php endif; ?><li class="nav-item"><span class="nav-link rn-nav-link">Hi, <?php echo htmlspecialchars($user_name); ?></span></li>
+            <?php if ($_SESSION["user_role"] === "admin"): ?><li class="nav-item"><a class="nav-link rn-nav-link" href="../pages/admin.php"><i class="bi bi-shield-lock me-1"></i>Dashboard</a></li><?php endif; ?>
+            <li class="nav-item"><a class="nav-link rn-nav-link" href="profile.php">Hi, <?php echo htmlspecialchars($user_name); ?></a></li>
             <li class="nav-item"><a class="nav-link rn-nav-link rn-nav-link-cta" href="../api/auth/logout.php">Logout</a></li>
-            <?php else: ?>
-            <li class="nav-item"><a class="nav-link rn-nav-link" href="register.php">Register</a></li>
-            <li class="nav-item"><a class="nav-link rn-nav-link rn-nav-link-cta" href="login.php">Login</a></li>
-            <?php endif; ?>
           </ul>
         </div>
       </div>
     </nav>
   </header>
 
-  <main class="py-5">
+  <main class="py-4">
     <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
 
-          <?php if (isset($_GET['success'])): ?>
-          <div class="alert alert-success mb-4">Profile updated successfully.</div>
-          <?php elseif (isset($_GET['error'])): ?>
-          <div class="alert alert-danger mb-4">
-            <?php
-              $msgs = [
-                'missing_fields'   => 'Please fill in all required fields.',
-                'invalid_email'    => 'Please enter a valid email address.',
-                'taken'            => 'That email or username is already in use.',
-                'wrong_password'   => 'Current password is incorrect.',
-                'password_mismatch'=> 'New passwords do not match.',
-                'password_short'   => 'Password must be at least 6 characters.',
-                'server_error'     => 'Something went wrong. Please try again.',
-              ];
-              echo htmlspecialchars($msgs[$_GET['error']] ?? 'An error occurred.');
-            ?>
-          </div>
-          <?php endif; ?>
-
-          <!-- Account Info -->
-          <div class="card rn-card mb-4">
-            <div class="card-body p-4">
-              <h2 class="rn-upload-title mb-1">Account Info</h2>
-              <p class="text-muted small mb-4">Member since <?php echo date('F j, Y', strtotime($date_created)); ?></p>
-              <form action="../api/profile/update.php" method="POST">
-                <div class="row g-3">
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold">Full Name</label>
-                    <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($name); ?>" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold">Username</label>
-                    <div class="input-group">
-                      <span class="input-group-text">@</span>
-                      <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($username); ?>" required>
-                    </div>
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label fw-semibold">Email</label>
-                    <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($email); ?>" required>
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label fw-semibold">Bio</label>
-                    <textarea name="bio" class="form-control" rows="3" placeholder="Tell people a little about yourself..."><?php echo htmlspecialchars($bio ?? ''); ?></textarea>
-                  </div>
-                </div>
-                <hr class="my-4">
-                <button type="submit" class="btn btn-rn-primary">Save Changes</button>
-              </form>
+      <!-- Profile header — constrained width -->
+      <div class="row justify-content-center mb-3">
+        <div class="col-lg-7 col-xl-6">
+          <div class="rn-ig-header">
+            <div class="rn-ig-avatar" style="background:<?php echo $av_color; ?>">
+              <span class="rn-ig-initial"><?php echo $initial; ?></span>
+            </div>
+            <div class="rn-ig-info">
+              <div class="rn-ig-name-row">
+                <h1 class="rn-ig-name"><?php echo htmlspecialchars($display_name); ?></h1>
+                <a href="settings.php" class="btn btn-rn-outline btn-sm rn-ig-edit-btn">
+                  <i class="bi bi-pencil me-1"></i>Edit profile
+                </a>
+              </div>
+              <p class="rn-ig-username">@<?php echo htmlspecialchars($username); ?></p>
+              <?php if ($bio): ?>
+              <p class="rn-ig-bio"><?php echo htmlspecialchars($bio); ?></p>
+              <?php endif; ?>
+              <div class="rn-ig-stats">
+                <span><strong><?php echo count($recipes); ?></strong> recipes</span>
+                <span><strong><?php echo $follower_count; ?></strong> followers</span>
+                <span><strong><?php echo $following_count; ?></strong> following</span>
+              </div>
             </div>
           </div>
-
-          <!-- Change Password -->
-          <div class="card rn-card mb-4">
-            <div class="card-body p-4">
-              <h2 class="h5 fw-bold mb-3">Change Password</h2>
-              <form action="../api/profile/change_password.php" method="POST">
-                <div class="row g-3">
-                  <div class="col-12">
-                    <label class="form-label fw-semibold">Current Password</label>
-                    <input type="password" name="current_password" class="form-control" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold">New Password</label>
-                    <input type="password" name="new_password" class="form-control" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold">Confirm New Password</label>
-                    <input type="password" name="confirm_password" class="form-control" required>
-                  </div>
-                </div>
-                <hr class="my-4">
-                <button type="submit" class="btn btn-rn-primary">Update Password</button>
-              </form>
-            </div>
-          </div>
-
         </div>
       </div>
+
+      <hr class="rn-ig-divider">
+
+      <!-- 3-col recipe grid — wider column so cells are genuinely small -->
+      <div class="row justify-content-center">
+        <div class="col-lg-9 col-xl-8 px-0 px-sm-3">
+          <?php if (empty($recipes)): ?>
+          <p class="text-muted text-center py-5">No recipes yet. <a href="upload.php" class="rn-author-link">Upload your first one!</a></p>
+          <?php else: ?>
+          <div class="rn-ig-grid">
+            <?php foreach ($recipes as $r):
+              $img   = $r['MediaURL'] ? '../' . htmlspecialchars($r['MediaURL']) : '../public/images/recipe_background.jpg';
+              $title = htmlspecialchars($r['Title']);
+              $likes = (int)$r['LikeCount'];
+            ?>
+            <a href="recipe.php?id=<?php echo (int)$r['RecipeID']; ?>" class="rn-ig-cell" title="<?php echo $title; ?>">
+              <img src="<?php echo $img; ?>" alt="<?php echo $title; ?>" />
+              <div class="rn-ig-cell-overlay">
+                <span class="rn-ig-cell-title"><?php echo $title; ?></span>
+                <span class="rn-ig-cell-likes"><i class="bi bi-heart-fill me-1"></i><?php echo $likes; ?></span>
+              </div>
+            </a>
+            <?php endforeach; ?>
+          </div>
+          <?php endif; ?>
+        </div>
+      </div>
+
     </div>
   </main>
 
-  <footer class="rn-footer py-4 mt-auto">
-    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center small">
-      <div class="rn-footer-copy">© 2026 RecipeNest</div>
-      <div class="mt-2 mt-md-0">
-        <a href="../index.php" class="rn-footer-link me-3">Home</a>
-        <a href="profile.php" class="rn-footer-link">Profile</a>
-      </div>
-    </div>
-  </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

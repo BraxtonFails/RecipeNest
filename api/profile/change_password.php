@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../../pages/profile.php');
+    header('Location: ../../pages/settings.php');
     exit;
 }
 
@@ -18,17 +18,17 @@ $new_password     = $_POST['new_password'] ?? '';
 $confirm          = $_POST['confirm_password'] ?? '';
 
 if (!$current_password || !$new_password || !$confirm) {
-    header('Location: ../../pages/profile.php?error=missing_fields');
+    header('Location: ../../pages/settings.php?error=missing_fields');
     exit;
 }
 
 if ($new_password !== $confirm) {
-    header('Location: ../../pages/profile.php?error=password_mismatch');
+    header('Location: ../../pages/settings.php?error=password_mismatch');
     exit;
 }
 
 if (strlen($new_password) < 6) {
-    header('Location: ../../pages/profile.php?error=password_short');
+    header('Location: ../../pages/settings.php?error=password_short');
     exit;
 }
 
@@ -40,7 +40,7 @@ $stmt->fetch();
 $stmt->close();
 
 if (!password_verify($current_password, $hash)) {
-    header('Location: ../../pages/profile.php?error=wrong_password');
+    header('Location: ../../pages/settings.php?error=wrong_password');
     exit;
 }
 
@@ -50,9 +50,9 @@ $stmt->bind_param('si', $new_hash, $user_id);
 
 if ($stmt->execute()) {
     $stmt->close();
-    header('Location: ../../pages/profile.php?success=1');
+    header('Location: ../../pages/settings.php?success=1');
 } else {
     $stmt->close();
-    header('Location: ../../pages/profile.php?error=server_error');
+    header('Location: ../../pages/settings.php?error=server_error');
 }
 exit;

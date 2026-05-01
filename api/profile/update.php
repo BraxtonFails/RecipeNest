@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../../pages/profile.php');
+    header('Location: ../../pages/settings.php');
     exit;
 }
 
@@ -19,12 +19,12 @@ $email    = trim($_POST['email'] ?? '');
 $bio      = trim($_POST['bio'] ?? '');
 
 if (!$name || !$username || !$email) {
-    header('Location: ../../pages/profile.php?error=missing_fields');
+    header('Location: ../../pages/settings.php?error=missing_fields');
     exit;
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    header('Location: ../../pages/profile.php?error=invalid_email');
+    header('Location: ../../pages/settings.php?error=invalid_email');
     exit;
 }
 
@@ -36,7 +36,7 @@ $stmt->store_result();
 
 if ($stmt->num_rows > 0) {
     $stmt->close();
-    header('Location: ../../pages/profile.php?error=taken');
+    header('Location: ../../pages/settings.php?error=taken');
     exit;
 }
 $stmt->close();
@@ -47,9 +47,9 @@ $stmt->bind_param('ssssi', $name, $username, $email, $bio, $user_id);
 if ($stmt->execute()) {
     $_SESSION['user_name'] = $name;
     $stmt->close();
-    header('Location: ../../pages/profile.php?success=1');
+    header('Location: ../../pages/settings.php?success=1');
 } else {
     $stmt->close();
-    header('Location: ../../pages/profile.php?error=server_error');
+    header('Location: ../../pages/settings.php?error=server_error');
 }
 exit;

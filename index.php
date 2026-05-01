@@ -38,6 +38,28 @@ function recipe_card($r) {
     echo '</div></div></div>';
 }
 
+// Helper: pick a consistent avatar bg color from user ID
+function avatar_color($id) {
+    $p = ['#7dbf77','#e6845a','#5a8fe6','#9b6de6','#e6b05a','#5ab8e6','#e6527a','#52b8a0'];
+    return $p[(int)$id % count($p)];
+}
+
+// Helper: render a creator card for the top-creators row
+function user_card($u) {
+    $id        = (int)$u['UserID'];
+    $name      = htmlspecialchars($u['Name'] ?: $u['Username']);
+    $username  = htmlspecialchars($u['Username']);
+    $initial   = strtoupper(mb_substr($name, 0, 1));
+    $followers = (int)$u['FollowerCount'];
+    $color     = avatar_color($id);
+    echo '<a href="pages/user.php?id=' . $id . '" class="rn-creator-card">';
+    echo '<div class="rn-creator-avatar" style="background:' . $color . '">' . $initial . '</div>';
+    echo '<div class="rn-creator-name">' . $name . '</div>';
+    echo '<div class="rn-creator-username">@' . $username . '</div>';
+    echo '<div class="rn-creator-followers"><i class="bi bi-people-fill me-1"></i>' . $followers . '</div>';
+    echo '</a>';
+}
+
 // Helper: run a recipe query and return rows
 function fetch_recipes($conn, $sql, $types = '', $params = []) {
     $stmt = $conn->prepare($sql);
@@ -78,6 +100,30 @@ if ($logged_in) {
     ", 'i', [$liked_uid]);
 }
 
+// From people the current user follows
+$following_feed = [];
+if ($logged_in) {
+    $feed_uid = $_SESSION['user_id'];
+    $following_feed = fetch_recipes($conn, $base_select . "
+        INNER JOIN follows f ON f.FollowingID = r.UserID AND f.FollowerID = ?
+        GROUP BY r.RecipeID ORDER BY r.DateCreation DESC LIMIT 12
+    ", 'i', [$feed_uid]);
+}
+
+// Top creators by follower count
+$stmt = $conn->prepare("
+    SELECT u.UserID, u.Name, u.Username, u.Bio,
+           COUNT(f.FollowerID) AS FollowerCount
+    FROM users u
+    LEFT JOIN follows f ON f.FollowingID = u.UserID
+    GROUP BY u.UserID
+    ORDER BY FollowerCount DESC, u.DateCreation ASC
+    LIMIT 20
+");
+$stmt->execute();
+$top_creators = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
 // Vegan: tagged with 'vegan'
 $vegan = fetch_recipes($conn, $base_select . "
     INNER JOIN recipehashtags rh ON rh.RecipeID = r.RecipeID
@@ -94,7 +140,7 @@ $vegan = fetch_recipes($conn, $base_select . "
     <title>RecipeNest – Discover &amp; Share Recipes</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="public/css/recipenest.css" />
+    <link rel="stylesheet" href="public/css/recipenest.css?v=<?php echo filemtime('public/css/recipenest.css'); ?>" />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
     <meta name="theme-color" content="#7dbf77" />
   </head>
@@ -123,7 +169,7 @@ $vegan = fetch_recipes($conn, $base_select . "
                 <a class="nav-link rn-nav-link active" aria-current="page" href="index.php">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link rn-nav-link" href="pages/profile.php">Profile</a>
+                <a class="nav-link rn-nav-link" href="pages/search.php">Search</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link rn-nav-link" href="pages/upload.php">Upload</a>
@@ -135,7 +181,7 @@ $vegan = fetch_recipes($conn, $base_select . "
               </li>
               <?php endif; ?>
               <li class="nav-item">
-                <span class="nav-link rn-nav-link">Hi, <?php echo htmlspecialchars($user_name); ?></span>
+                <a class="nav-link rn-nav-link" href="pages/profile.php">Hi, <?php echo htmlspecialchars($user_name); ?></a>
               </li>
               <li class="nav-item">
                 <a class="nav-link rn-nav-link rn-nav-link-cta" href="api/auth/logout.php">Logout</a>
@@ -167,6 +213,17 @@ $vegan = fetch_recipes($conn, $base_select . "
       <section class="rn-recipes py-5">
         <div class="container">
           <div class="rn-recipes-rows">
+            <!-- Top creators row — always first -->
+            <?php if (!empty($top_creators)): ?>
+            <h2 class="rn-row-title">Top creators</h2>
+            <div class="rn-row-wrapper">
+              <button type="button" class="rn-row-arrow rn-row-arrow-left" aria-label="Scroll row left"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+              <div class="rn-row-scroll">
+                <?php foreach ($top_creators as $u) user_card($u); ?>
+              </div>
+              <button type="button" class="rn-row-arrow rn-row-arrow-right" aria-label="Scroll row right"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+            </div>
+            <?php endif; ?>
             <!-- Liked recipes (logged in users only) -->
             <?php if ($logged_in): ?>
             <h2 class="rn-row-title">Your liked recipes</h2>
@@ -175,6 +232,17 @@ $vegan = fetch_recipes($conn, $base_select . "
               <div class="rn-row-scroll" tabindex="0">
                 <?php if ($liked) { foreach ($liked as $r) recipe_card($r); }
                 else { echo '<p class="text-muted p-3">You haven\'t liked any recipes yet.</p>'; } ?>
+              </div>
+              <button type="button" class="rn-row-arrow rn-row-arrow-right" aria-label="Scroll row right"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+            </div>
+            <?php endif; ?>
+            <!-- Following feed (logged in + following someone) -->
+            <?php if ($logged_in && !empty($following_feed)): ?>
+            <h2 class="rn-row-title">From people you follow</h2>
+            <div class="rn-row-wrapper">
+              <button type="button" class="rn-row-arrow rn-row-arrow-left" aria-label="Scroll row left"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+              <div class="rn-row-scroll">
+                <?php foreach ($following_feed as $r) recipe_card($r); ?>
               </div>
               <button type="button" class="rn-row-arrow rn-row-arrow-right" aria-label="Scroll row right"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
             </div>

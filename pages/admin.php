@@ -14,6 +14,7 @@ require_once '../config/db.php';
 $total_recipes  = $conn->query('SELECT COUNT(*) FROM recipes')->fetch_row()[0];
 $total_users    = $conn->query('SELECT COUNT(*) FROM users')->fetch_row()[0];
 $new_today      = $conn->query('SELECT COUNT(*) FROM recipes WHERE DATE(DateCreation) = CURDATE()')->fetch_row()[0];
+$total_comments = $conn->query('SELECT COUNT(*) FROM comments')->fetch_row()[0];
 
 // Recent recipes
 $recipes = $conn->query('
@@ -35,6 +36,18 @@ $users = $conn->query('
 ')->fetch_all(MYSQLI_ASSOC);
 
 $reports = 0;
+
+// All comments
+$comments = $conn->query('
+    SELECT c.CommentID, c.CommentText, c.DateCreation, c.RecipeID,
+           u.Name AS AuthorName, u.Username,
+           r.Title AS RecipeTitle
+    FROM comments c
+    JOIN users u ON u.UserID = c.UserID
+    JOIN recipes r ON r.RecipeID = c.RecipeID
+    ORDER BY c.DateCreation DESC
+    LIMIT 100
+')->fetch_all(MYSQLI_ASSOC);
 ?>
 <!doctype html>
 <html lang="en">
@@ -44,7 +57,7 @@ $reports = 0;
   <title>Admin Dashboard – RecipeNest</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="../public/css/recipenest.css">
+  <link rel="stylesheet" href="../public/css/recipenest.css?v=<?php echo filemtime('../public/css/recipenest.css'); ?>">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <style>
     body { background: var(--rn-bg); color: var(--rn-ink); }
@@ -76,10 +89,11 @@ $reports = 0;
       <span class="fw-bold">RecipeNest Admin</span>
     </div>
     <nav class="nav nav-pills flex-column gap-1">
-      <a class="nav-link active" href="#" onclick="showTab('overview')"><i class="bi bi-speedometer2 me-2"></i>Overview</a>
-      <a class="nav-link" href="#" onclick="showTab('recipes')"><i class="bi bi-journal-text me-2"></i>Recipes</a>
-      <a class="nav-link" href="#" onclick="showTab('users')"><i class="bi bi-people me-2"></i>Users</a>
-      <a class="nav-link" href="#" onclick="showTab('reports')"><i class="bi bi-flag me-2"></i>Reports</a>
+      <a class="nav-link active" href="#" onclick="showTab('overview', this)"><i class="bi bi-speedometer2 me-2"></i>Overview</a>
+      <a class="nav-link" href="#" onclick="showTab('recipes', this)"><i class="bi bi-journal-text me-2"></i>Recipes</a>
+      <a class="nav-link" href="#" onclick="showTab('users', this)"><i class="bi bi-people me-2"></i>Users</a>
+      <a class="nav-link" href="#" onclick="showTab('comments', this)"><i class="bi bi-chat-dots me-2"></i>Comments</a>
+      <a class="nav-link" href="#" onclick="showTab('reports', this)"><i class="bi bi-flag me-2"></i>Reports</a>
     </nav>
     <div class="mt-auto pt-3 border-top border-secondary d-flex flex-column gap-1">
       <a class="nav-link" href="../index.php" target="_blank"><i class="bi bi-eye me-2"></i>View as user</a>
@@ -133,6 +147,13 @@ $reports = 0;
               <div class="text-muted small">Pending Reports</div>
               <div class="fs-3 fw-bold"><?php echo $reports; ?></div>
               <i class="bi bi-flag text-muted"></i>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card p-3">
+              <div class="text-muted small">Comments</div>
+              <div class="fs-3 fw-bold"><?php echo $total_comments; ?></div>
+              <i class="bi bi-chat-dots text-muted"></i>
             </div>
           </div>
           <div class="col-6 col-md-3">
@@ -226,6 +247,64 @@ $reports = 0;
         </div>
       </div>
 
+      <!-- COMMENTS TAB -->
+      <div id="tab-comments" class="section-tab">
+        <h1 class="h4 mb-4">All Comments <span class="badge bg-secondary fs-6"><?php echo $total_comments; ?></span></h1>
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table mb-0">
+              <thead>
+                <tr>
+                  <th>Author</th>
+                  <th>Recipe</th>
+                  <th>Comment</th>
+                  <th>Date</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($comments as $c): ?>
+                <tr>
+                  <td>
+                    <span class="fw-semibold"><?php echo htmlspecialchars($c['AuthorName'] ?? $c['Username']); ?></span>
+                    <span class="text-muted small d-block">@<?php echo htmlspecialchars($c['Username']); ?></span>
+                  </td>
+                  <td>
+                    <a href="recipe.php?id=<?php echo $c['RecipeID']; ?>#comments">
+                      <?php echo htmlspecialchars($c['RecipeTitle']); ?>
+                    </a>
+                  </td>
+                  <td style="max-width:320px;">
+                    <span class="d-inline-block text-truncate" style="max-width:300px;" title="<?php echo htmlspecialchars($c['CommentText']); ?>">
+                      <?php echo htmlspecialchars($c['CommentText']); ?>
+                    </span>
+                  </td>
+                  <td class="text-muted small text-nowrap">
+                    <?php echo $c['DateCreation'] ? date('M j, Y', strtotime($c['DateCreation'])) : '—'; ?>
+                  </td>
+                  <td class="text-end">
+                    <form method="POST" action="../api/recipes/comment.php" class="d-inline"
+                          onsubmit="return confirm('Delete this comment?')">
+                      <input type="hidden" name="_action"    value="delete">
+                      <input type="hidden" name="comment_id" value="<?php echo (int)$c['CommentID']; ?>">
+                      <input type="hidden" name="recipe_id"  value="<?php echo (int)$c['RecipeID']; ?>">
+                      <input type="hidden" name="redirect"   value="admin">
+                      <button class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash me-1"></i>Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <?php endforeach; ?>
+                <?php if (empty($comments)): ?>
+                <tr><td colspan="5" class="text-muted text-center py-3">No comments yet.</td></tr>
+                <?php endif; ?>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <!-- REPORTS TAB -->
       <div id="tab-reports" class="section-tab">
         <h1 class="h4 mb-4">Reports</h1>
@@ -240,11 +319,19 @@ $reports = 0;
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  function showTab(name) {
+  function showTab(name, link) {
     document.querySelectorAll('.section-tab').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.sidebar .nav-link').forEach(el => el.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
-    event.target.classList.add('active');
+    if (link) link.classList.add('active');
+  }
+
+  // Auto-open tab if redirected back with ?tab=
+  const urlTab = new URLSearchParams(location.search).get('tab');
+  if (urlTab) {
+    const link = [...document.querySelectorAll('.sidebar .nav-link')]
+      .find(a => a.getAttribute('onclick')?.includes("'" + urlTab + "'"));
+    showTab(urlTab, link);
   }
 </script>
 </body>

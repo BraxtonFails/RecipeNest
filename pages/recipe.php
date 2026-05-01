@@ -81,6 +81,20 @@ if ($logged_in) {
     $stmt->close();
 }
 
+// Fetch comments with author name
+$stmt = $conn->prepare('
+    SELECT c.CommentID, c.CommentText AS Content, c.DateCreation, c.UserID,
+           u.Name AS AuthorName, u.Username
+    FROM comments c
+    JOIN users u ON u.UserID = c.UserID
+    WHERE c.RecipeID = ?
+    ORDER BY c.DateCreation ASC
+');
+$stmt->bind_param('i', $id);
+$stmt->execute();
+$comments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
 $img   = $media['MediaURL'] ?? '../public/images/recipe_background.jpg';
 $title = htmlspecialchars($recipe['Title']);
 
@@ -101,7 +115,7 @@ function fmt_time($t) {
   <title><?php echo $title; ?> - RecipeNest</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="../public/css/recipenest.css">
+  <link rel="stylesheet" href="../public/css/recipenest.css?v=<?php echo filemtime('../public/css/recipenest.css'); ?>">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -118,10 +132,11 @@ function fmt_time($t) {
         <div class="collapse navbar-collapse" id="recipeNav">
           <ul class="navbar-nav ms-auto gap-1 gap-lg-2">
             <li class="nav-item"><a class="nav-link rn-nav-link" href="../index.php">Home</a></li>
-            <li class="nav-item"><a class="nav-link rn-nav-link" href="profile.php">Profile</a></li>
+            <li class="nav-item"><a class="nav-link rn-nav-link" href="search.php">Search</a></li>
+            
             <li class="nav-item"><a class="nav-link rn-nav-link" href="upload.php">Upload</a></li>
             <?php if ($logged_in): ?>
-            <?php if ($_SESSION["user_role"] === "admin"): ?><li class="nav-item"><a class="nav-link rn-nav-link" href="../pages/admin.php"><i class="bi bi-shield-lock me-1"></i>Dashboard</a></li><?php endif; ?><li class="nav-item"><span class="nav-link rn-nav-link">Hi, <?php echo htmlspecialchars($user_name); ?></span></li>
+            <?php if ($_SESSION["user_role"] === "admin"): ?><li class="nav-item"><a class="nav-link rn-nav-link" href="../pages/admin.php"><i class="bi bi-shield-lock me-1"></i>Dashboard</a></li><?php endif; ?><li class="nav-item"><a class="nav-link rn-nav-link" href="profile.php">Hi, <?php echo htmlspecialchars($user_name); ?></a></li>
             <li class="nav-item"><a class="nav-link rn-nav-link rn-nav-link-cta" href="../api/auth/logout.php">Logout</a></li>
             <?php else: ?>
             <li class="nav-item"><a class="nav-link rn-nav-link" href="register.php">Register</a></li>
@@ -142,7 +157,7 @@ function fmt_time($t) {
             <div class="card-body p-4">
 
               <h1 class="h3 mb-1"><?php echo $title; ?></h1>
-              <p class="text-muted small mb-3">By <?php echo htmlspecialchars($recipe['AuthorName']); ?></p>
+              <p class="text-muted small mb-3">By <a href="user.php?id=<?php echo (int)$recipe['AuthorID']; ?>" class="rn-author-link"><?php echo htmlspecialchars($recipe['AuthorName']); ?></a></p>
 
               <div class="d-flex flex-wrap gap-2 mb-4 rn-meta">
                 <span class="rn-pill green"><i class="bi bi-heart-fill me-1"></i><?php echo $like_count; ?> likes</span>
@@ -211,6 +226,92 @@ function fmt_time($t) {
               </div>
             </div>
           </article>
+
+          <!-- ── Comments ── -->
+          <section class="rn-comments mt-4" id="comments">
+            <h2 class="rn-comments-heading">
+              <i class="bi bi-chat-dots me-2"></i>Comments
+              <span class="rn-comments-count"><?php echo count($comments); ?></span>
+            </h2>
+
+            <?php if (isset($_GET['comment_error'])): ?>
+            <div class="alert alert-danger mb-3">
+              <?php echo $_GET['comment_error'] === 'too_long'
+                ? 'Comment must be 1000 characters or fewer.'
+                : 'Please write something before submitting.'; ?>
+            </div>
+            <?php endif; ?>
+
+            <!-- Post form -->
+            <?php if ($logged_in): ?>
+            <form method="POST" action="../api/recipes/comment.php" class="rn-comment-form mb-4">
+              <input type="hidden" name="recipe_id" value="<?php echo $id; ?>">
+              <div class="rn-comment-form-row">
+                <div class="rn-comment-avatar rn-comment-avatar--mine">
+                  <?php echo strtoupper(mb_substr($user_name, 0, 1)); ?>
+                </div>
+                <div class="rn-comment-input-wrap">
+                  <textarea
+                    name="content"
+                    class="rn-comment-textarea"
+                    placeholder="Share your thoughts on this recipe…"
+                    maxlength="1000"
+                    rows="3"
+                    required
+                  ></textarea>
+                  <div class="rn-comment-form-footer">
+                    <button type="submit" class="rn-comment-submit">
+                      <i class="bi bi-send me-1"></i>Post
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <?php else: ?>
+            <p class="rn-comments-login-prompt">
+              <a href="login.php">Log in</a> to leave a comment.
+            </p>
+            <?php endif; ?>
+
+            <!-- Comment list -->
+            <?php if (empty($comments)): ?>
+            <p class="rn-comments-empty">No comments yet — be the first!</p>
+            <?php else: ?>
+            <div class="rn-comment-list">
+              <?php foreach ($comments as $c):
+                $c_name     = htmlspecialchars($c['AuthorName'] ?: $c['Username']);
+                $c_initial  = strtoupper(mb_substr($c_name, 0, 1));
+                $c_content  = htmlspecialchars($c['Content']);
+                $c_date     = date('M j, Y', strtotime($c['DateCreation']));
+                $can_delete = $logged_in && ($c['UserID'] == $_SESSION['user_id'] || ($_SESSION['user_role'] ?? '') === 'admin');
+              ?>
+              <div class="rn-comment">
+                <div class="rn-comment-avatar">
+                  <?php echo $c_initial; ?>
+                </div>
+                <div class="rn-comment-body">
+                  <div class="rn-comment-meta">
+                    <span class="rn-comment-author"><?php echo $c_name; ?></span>
+                    <span class="rn-comment-date"><?php echo $c_date; ?></span>
+                    <?php if ($can_delete): ?>
+                    <form method="POST" action="../api/recipes/comment.php" class="rn-comment-delete-form">
+                      <input type="hidden" name="_action"    value="delete">
+                      <input type="hidden" name="comment_id" value="<?php echo (int)$c['CommentID']; ?>">
+                      <input type="hidden" name="recipe_id"  value="<?php echo $id; ?>">
+                      <button type="submit" class="rn-comment-delete" title="Delete comment">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </form>
+                    <?php endif; ?>
+                  </div>
+                  <p class="rn-comment-text"><?php echo $c_content; ?></p>
+                </div>
+              </div>
+              <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+          </section>
+
         </div>
       </div>
     </div>

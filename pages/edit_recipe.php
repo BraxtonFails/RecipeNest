@@ -76,7 +76,7 @@ $cook_time = $recipe['TotalCookTime'] ?? '00:00:00';
   <title>Edit – <?php echo htmlspecialchars($recipe['Title']); ?></title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="../public/css/recipenest.css" />
+  <link rel="stylesheet" href="../public/css/recipenest.css?v=<?php echo filemtime('../public/css/recipenest.css'); ?>" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -90,9 +90,10 @@ $cook_time = $recipe['TotalCookTime'] ?? '00:00:00';
         <div class="collapse navbar-collapse" id="mainNav">
           <ul class="navbar-nav ms-auto gap-1 gap-lg-2">
             <li class="nav-item"><a class="nav-link rn-nav-link" href="../index.php">Home</a></li>
-            <li class="nav-item"><a class="nav-link rn-nav-link" href="profile.php">Profile</a></li>
+            <li class="nav-item"><a class="nav-link rn-nav-link" href="search.php">Search</a></li>
+            
             <li class="nav-item"><a class="nav-link rn-nav-link" href="upload.php">Upload</a></li>
-            <?php if ($_SESSION["user_role"] === "admin"): ?><li class="nav-item"><a class="nav-link rn-nav-link" href="../pages/admin.php"><i class="bi bi-shield-lock me-1"></i>Dashboard</a></li><?php endif; ?><li class="nav-item"><span class="nav-link rn-nav-link">Hi, <?php echo htmlspecialchars($user_name); ?></span></li>
+            <?php if ($_SESSION["user_role"] === "admin"): ?><li class="nav-item"><a class="nav-link rn-nav-link" href="../pages/admin.php"><i class="bi bi-shield-lock me-1"></i>Dashboard</a></li><?php endif; ?><li class="nav-item"><a class="nav-link rn-nav-link" href="profile.php">Hi, <?php echo htmlspecialchars($user_name); ?></a></li>
             <li class="nav-item"><a class="nav-link rn-nav-link rn-nav-link-cta" href="../api/auth/logout.php">Logout</a></li>
           </ul>
         </div>
