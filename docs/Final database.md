@@ -144,7 +144,6 @@ erDiagram
 ## SQL schema (reference)
 
 ```sql
-⚙️ SQL Schema
 CREATE DATABASE RecipeNest;
 USE RecipeNest;
 
